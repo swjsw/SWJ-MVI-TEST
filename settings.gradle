@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "app"
+rootProject.name = "SWJ-MVI"
 include ':app'
 include ':mvi'

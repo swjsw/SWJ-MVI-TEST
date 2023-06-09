@@ -39,6 +39,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    // lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
 }
 
 afterEvaluate {
@@ -50,7 +53,7 @@ afterEvaluate {
                 from components.release
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = 'com.github.JoongUpJang'
+                groupId = 'com.github.swjsw'
                 artifactId = 'SWJ_MVI'
                 version = '0.1.0'
             }
@@ -59,7 +62,7 @@ afterEvaluate {
                 // Applies the component for the debug build variant.
                 from components.debug
 
-                groupId = 'com.github.JoongUpJang'
+                groupId = 'com.github.swjsw'
                 artifactId = 'SWJ_MVI'
                 version = '0.1.0'
             }
