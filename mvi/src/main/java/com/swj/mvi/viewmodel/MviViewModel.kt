@@ -23,11 +23,13 @@ interface MviSideEffect
 abstract class MviViewModel<Action : MviAction, Mutation : MviMutation, State : MviState, SideEffect : MviSideEffect> : ViewModel()  {
     private val initialState: State by lazy { createInitialState() }
 
+    abstract fun createInitialState(): State
+
     val currentState: State
         get() = uiState.value
 
     private val _uiState: MutableStateFlow<State> = MutableStateFlow(initialState)
-    private val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val _sideEffect: Channel<SideEffect> = Channel()
     val sideEffect = _sideEffect.receiveAsFlow()
@@ -38,8 +40,8 @@ abstract class MviViewModel<Action : MviAction, Mutation : MviMutation, State : 
     private val _mutation: MutableSharedFlow<Mutation> = MutableSharedFlow()
     private val mutation = _mutation.asSharedFlow()
 
-    abstract fun createInitialState(): State
     abstract fun mutate(action: Action): Flow<Mutation>
+
     abstract fun reduce(state: State, mutation: Mutation) : State
 
     init {
@@ -58,12 +60,17 @@ abstract class MviViewModel<Action : MviAction, Mutation : MviMutation, State : 
 
         viewModelScope.launch {
             mutation.collect { mutation ->
+                // 원자성을 지키기 위해 update 사용
+                // state 값이 같은 경우에는 StateFlow 내부적으로 필터링 해서 값이 변경되지 않는다.
+                // 방출도 되지 않으므로 수집도 되지 않는다.
                 _uiState.update { currentState ->
                     reduce(currentState, mutation)
                 }
             }
         }
     }
+
+
 
     final fun postAction(action: Action) {
         val newEvent = action
